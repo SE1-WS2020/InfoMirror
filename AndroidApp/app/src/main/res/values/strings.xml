@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">InfoMirrorApp</string>
+    <string name="passwordTextHint">Password</string>
+    <string name="emailAddressTextHint">E-Mail address</string>
+    <string name="signInButtonText">Sign in</string>
+    <string name="registerButtonText">Register</string>
+    <string name="usernameTextHint">Username</string>
+    <string name="repeatPasswordHint">Repeat Password</string>
 </resources>
