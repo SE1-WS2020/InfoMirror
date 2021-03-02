@@ -4,11 +4,11 @@ from django.db import models
 
 
 class UserConfig(models.Model):
-    user = models.CharField(max_length=64)
+    username = models.CharField(max_length=64)
     news_app = models.BooleanField()
     covid_tracker = models.BooleanField()
     traffic_status = models.BooleanField()
     weather_app = models.BooleanField()
 
     def __str__(self):
-        return self.user + "'s config"
+        return self.username + "'s config"

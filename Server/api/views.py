@@ -21,8 +21,34 @@ def api_overview(request):
 
 
 @api_view(['GET'])
-def userConfigList(request):
+def user_config_list(request):
     configs = UserConfig.objects.all()
     serializer = UserConfigSerializer(configs, many=True)
+
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def user_config_detail(request, pk):
+    configs = UserConfig.objects.get(id=pk)
+    serializer = UserConfigSerializer(configs, many=False)
+
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def user_config_create(request):
+    serializer = UserConfigSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response("Successfully created config.")
+    return Response("Config could not be created.")
+
+
+@api_view(['GET'])
+def username_config_detail(request, username):
+    configs = UserConfig.objects.get(username=username)
+    serializer = UserConfigSerializer(configs, many=False)
 
     return Response(serializer.data)
