@@ -6,12 +6,12 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
+from account.models import Account
 from .models import UserConfig
 from .serializers import UserConfigSerializer, RegistrationSerializer
 
 
 # Create your views here.
-
 
 @api_view(['GET'])
 @permission_classes(())
@@ -68,9 +68,9 @@ def user_config_create(request):
 
 @api_view(['GET'])
 @permission_classes((IsAuthenticated, ))
-def username_config_detail(request, username):
+def username_config_detail(request, user_email):
     try:
-        configs = UserConfig.objects.get(user_account=username)
+        configs = UserConfig.objects.get(user_account=user_email)
     except Exception:
         return Response({'response': 'No config exists for this user.'})
 
@@ -100,3 +100,17 @@ def registration_view(request):
         else:
             data = serializer.errors
         return Response(data)
+
+
+@api_view(['POST', ])
+@permission_classes((IsAuthenticated, ))
+def check_token_validity(request, user_email):
+    try:
+        user = Account.objects.get(email=user_email)
+    except Exception:
+        return Response({'response': 'Authentication token does not match user email address.'})
+
+    if user == request.user:
+        return Response({'response': 'Token ok.'})
+    else:
+        return Response({'response': 'Authentication token does not match user email address.'})
