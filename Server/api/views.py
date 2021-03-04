@@ -2,7 +2,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.authtoken.models import Token
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
 from .models import UserConfig
@@ -23,6 +24,7 @@ def api_overview(request):
 
 
 @api_view(['GET'])
+@permission_classes((IsAdminUser, ))
 def user_config_list(request):
     configs = UserConfig.objects.all()
     serializer = UserConfigSerializer(configs, many=True)
@@ -30,33 +32,68 @@ def user_config_list(request):
     return Response(serializer.data)
 
 
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def user_config_create(request):
+
+    try:
+        # try to get existing config
+        existing_config = UserConfig.objects.get(user_account=request.data['user_account'])
+        print(existing_config)
+
+        # config already exists
+        existing_config.news_app = True if request.data['news_app'] == 'true' else False
+        existing_config.covid_tracker = True if request.data['covid_tracker'] == 'true' else False
+        existing_config.traffic_status = True if request.data['traffic_status'] == 'true' else False
+        existing_config.weather_app = True if request.data['weather_app'] == 'true' else False
+
+        existing_config.save()
+        return Response("Existing config has been updated.")
+
+    except Exception:
+        # config does not exist yet
+        serializer = UserConfigSerializer(data=request.data)
+
+        if request.data['user_account'] == request.user.email:
+            if serializer.is_valid():
+                serializer.save()
+                return Response("Successfully created config.")
+            else:
+                return Response("Config could not be created.")
+        else:
+            return Response("Can not create config for another user.")
+
+
 @api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def username_config_detail(request, username):
+    configs = UserConfig.objects.get(user_account=username)
+    serializer = UserConfigSerializer(configs, many=False)
+
+    user = request.user
+
+    if configs.user_account == user or user.is_admin:
+        return Response(serializer.data)
+
+    return Response({'response': 'No permission.'})
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def user_config_detail(request, pk):
     configs = UserConfig.objects.get(id=pk)
     serializer = UserConfigSerializer(configs, many=False)
 
-    return Response(serializer.data)
+    user = request.user
+
+    if configs.user_account == user or user.is_admin:
+        return Response(serializer.data)
+
+    return Response({'response': 'No permission.'})
 
 
-@api_view(['POST'])
-def user_config_create(request):
-    serializer = UserConfigSerializer(data=request.data)
-
-    if serializer.is_valid():
-        serializer.save()
-        return Response("Successfully created config.")
-    return Response("Config could not be created.")
-
-
-@api_view(['GET'])
-def username_config_detail(request, username):
-    configs = UserConfig.objects.get(username=username)
-    serializer = UserConfigSerializer(configs, many=False)
-
-    return Response(serializer.data)
-
-
-@api_view(['POST',])
+@api_view(['POST', ])
+@permission_classes(())
 def registration_view(request):
     if request.method == 'POST':
         serializer = RegistrationSerializer(data=request.data)

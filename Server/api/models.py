@@ -5,17 +5,18 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
 # Create your models here.
+from account.models import Account
 
 
 class UserConfig(models.Model):
-    username = models.CharField(max_length=64)
+    user_account = models.OneToOneField(Account, on_delete=models.CASCADE, primary_key=True)
     news_app = models.BooleanField()
     covid_tracker = models.BooleanField()
     traffic_status = models.BooleanField()
     weather_app = models.BooleanField()
 
     def __str__(self):
-        return self.username + "'s config"
+        return self.user_account.email
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

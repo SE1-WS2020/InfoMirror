@@ -30,7 +30,7 @@ class AccountManager(BaseUserManager):
 
 # Create your models here.
 class Account(AbstractBaseUser):
-    email = models.EmailField(verbose_name="email", max_length=60, unique=True)
+    email = models.EmailField(verbose_name="email", max_length=60, unique=True, primary_key=True)
     username = models.CharField(max_length=30, unique=True)
     date_created = models.DateTimeField(verbose_name="account created date", auto_now_add=True)
     last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
