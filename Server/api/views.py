@@ -14,6 +14,7 @@ from .serializers import UserConfigSerializer, RegistrationSerializer
 
 
 @api_view(['GET'])
+@permission_classes(())
 def api_overview(request):
     api_urls = {
         'list': '/user-config/',
@@ -35,20 +36,21 @@ def user_config_list(request):
 @api_view(['POST'])
 @permission_classes((IsAuthenticated,))
 def user_config_create(request):
-
     try:
         # try to get existing config
         existing_config = UserConfig.objects.get(user_account=request.data['user_account'])
-        print(existing_config)
 
         # config already exists
-        existing_config.news_app = True if request.data['news_app'] == 'true' else False
-        existing_config.covid_tracker = True if request.data['covid_tracker'] == 'true' else False
-        existing_config.traffic_status = True if request.data['traffic_status'] == 'true' else False
-        existing_config.weather_app = True if request.data['weather_app'] == 'true' else False
+        if existing_config.user_account == request.user or request.user.is_admin:
+            existing_config.news_app = True if request.data['news_app'] == 'true' else False
+            existing_config.covid_tracker = True if request.data['covid_tracker'] == 'true' else False
+            existing_config.traffic_status = True if request.data['traffic_status'] == 'true' else False
+            existing_config.weather_app = True if request.data['weather_app'] == 'true' else False
 
-        existing_config.save()
-        return Response("Existing config has been updated.")
+            existing_config.save()
+            return Response("Existing config has been updated.")
+        else:
+            return Response("You have no permissions to update the configuration.")
 
     except Exception:
         # config does not exist yet
@@ -67,21 +69,11 @@ def user_config_create(request):
 @api_view(['GET'])
 @permission_classes((IsAuthenticated, ))
 def username_config_detail(request, username):
-    configs = UserConfig.objects.get(user_account=username)
-    serializer = UserConfigSerializer(configs, many=False)
+    try:
+        configs = UserConfig.objects.get(user_account=username)
+    except Exception:
+        return Response({'response': 'No config exists for this user.'})
 
-    user = request.user
-
-    if configs.user_account == user or user.is_admin:
-        return Response(serializer.data)
-
-    return Response({'response': 'No permission.'})
-
-
-@api_view(['GET'])
-@permission_classes((IsAuthenticated, ))
-def user_config_detail(request, pk):
-    configs = UserConfig.objects.get(id=pk)
     serializer = UserConfigSerializer(configs, many=False)
 
     user = request.user
