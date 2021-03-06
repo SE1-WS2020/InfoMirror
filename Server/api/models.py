@@ -8,7 +8,10 @@ from rest_framework.authtoken.models import Token
 from account.models import Account
 
 
-class UserConfig(models.Model):
+IMAGE_FILE_PATH = "user_images/"
+
+
+class UserConfigModel(models.Model):
     user_account = models.OneToOneField(Account, on_delete=models.CASCADE, primary_key=True)
     news_app = models.BooleanField()
     covid_tracker = models.BooleanField()
@@ -19,7 +22,13 @@ class UserConfig(models.Model):
         return self.user_account.email
 
 
+class UserImageModel(models.Model):
+    user_account = models.OneToOneField(Account, on_delete=models.CASCADE, primary_key=True)
+    user_image = models.ImageField(upload_to=IMAGE_FILE_PATH)
+
+
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+

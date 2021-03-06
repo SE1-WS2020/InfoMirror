@@ -1,12 +1,12 @@
 from rest_framework import serializers
 
 from account.models import Account
-from .models import UserConfig
+from .models import UserConfigModel, UserImageModel
 
 
 class UserConfigSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserConfig
+        model = UserConfigModel
         fields = '__all__'
 
 
@@ -32,3 +32,15 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.save()
 
         return account
+
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserImageModel
+        fields = ('user_account', 'user_image')
+
+
+class UserImageEmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserImageModel
+        fields = ('user_account', )

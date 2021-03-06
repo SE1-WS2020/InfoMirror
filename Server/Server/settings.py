@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'account',
+    'django_cleanup',
 ]
 
 REST_FRAMEWORK = {

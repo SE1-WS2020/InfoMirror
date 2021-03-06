@@ -10,4 +10,8 @@ urlpatterns = [
     path('register/', views.registration_view, name="register"),
     path('login/', obtain_auth_token, name="login"),
     path('login-check/<str:user_email>', views.check_token_validity, name="check token validity"),
+    path('upload_image/', views.put_image, name="upload user image"),
+    path('download_image/', views.get_image, name="upload user image"),
+    path('all_users/', views.get_all_useremails, name="get all user emails"),
+    # path('download_images/', views.get_user_images, name="download all user images"),
 ]
