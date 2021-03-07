@@ -62,6 +62,7 @@
                 android:id="@+id/singInButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:onClick="login"
                 android:text="@string/signInButtonText" />
 
             <Button
@@ -73,4 +74,12 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/responseView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="24dp"
+        tools:layout_editor_absoluteY="16dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

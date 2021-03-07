@@ -80,5 +80,5 @@ def get_user_image(token, user_email):
 # get_user_config("anotherone@email.com", get_token("anotherone@email.com", "example_pw"))
 # get_all_user_emails(get_token("mirror@admin.com", "123456"))
 # get_user_image(get_token("mirror@admin.com", "123456"), "another1@email.com")
-get_all_user_images(get_token("mirror@admin.com", "123456"))
-
+# get_all_user_images(get_token("mirror@admin.com", "123456"))
+print(get_token("admin@rights.com", "123456"))

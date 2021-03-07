@@ -20,12 +20,17 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
-            android:id="@+id/editTextTextPersonName3"
+            android:id="@+id/editTextUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/usernameTextHint"
             android:inputType="textPersonName" />
+        <TextView
+            android:id="@+id/usernameHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red" />
 
         <EditText
             android:id="@+id/editTextTextEmailAddress"
@@ -34,6 +39,11 @@
             android:ems="10"
             android:hint="@string/emailAddressTextHint"
             android:inputType="textEmailAddress" />
+        <TextView
+            android:id="@+id/emailHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red" />
 
         <EditText
             android:id="@+id/editTextTextPassword"
@@ -42,6 +52,11 @@
             android:ems="10"
             android:hint="@string/passwordTextHint"
             android:inputType="textPassword" />
+        <TextView
+            android:id="@+id/passwordHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/red"/>
 
         <EditText
             android:id="@+id/editTextTextPassword2"
@@ -58,4 +73,12 @@
             android:layout_height="wrap_content"
             android:text="@string/registerButtonText" />
     </LinearLayout>
+
+    <TextView
+    android:id="@+id/responseView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="TextView"
+    tools:layout_editor_absoluteX="24dp"
+    tools:layout_editor_absoluteY="16dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

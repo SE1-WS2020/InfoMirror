@@ -58,22 +58,23 @@ def user_config_create(request):
             existing_config.weather_app = True if request.data['weather_app'] == 'true' else False
 
             existing_config.save()
-            return Response("Existing config has been updated.")
+            return Response({"response": "Existing config has been updated."})
         else:
-            return Response("You have no permissions to update the configuration.")
+            return Response({"response": "You have no permissions to update the configuration."})
 
     except Exception:
         # config does not exist yet
         serializer = UserConfigSerializer(data=request.data)
 
+        print(request.data)
         if request.data['user_account'] == request.user.email:
             if serializer.is_valid():
                 serializer.save()
-                return Response("Successfully created config.")
+                return Response({"response": "Successfully created config."})
             else:
-                return Response("Config could not be created.")
+                return Response({"response":"Config could not be created."})
         else:
-            return Response("Can not create config for another user.")
+            return Response({"response":"Can not create config for another user."})
 
 
 @api_view(['GET'])
@@ -116,6 +117,7 @@ def registration_view(request):
 @permission_classes((IsAuthenticated, ))
 def check_token_validity(request, user_email):
     try:
+        print(request)
         user = Account.objects.get(email=user_email)
     except Exception:
         return Response({'response': 'Authentication token does not match user email address.'})
