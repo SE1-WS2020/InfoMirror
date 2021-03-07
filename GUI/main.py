@@ -33,6 +33,7 @@ class InfomirrorGUI(QWidget):
 
         self.spacerrona = QSpacerItem(300,200,QSizePolicy.Minimum)
         #self.grid.addItem(spacer,0,1)
+        self.grid.addItem(self.spacerweather,0,0)
         self.grid.addWidget(self.a,0,1)
         self.setLayout(self.grid)
         self.setWindowTitle("PyQt5 Group Box")
@@ -62,6 +63,7 @@ class InfomirrorGUI(QWidget):
             pass
         else:
             #spacer = QSpacerItem(300,200,QSizePolicy.Minimum)
+            self.grid.removeItem(self.spacerweather)
             config = scripts.get_user_config(user.replace('_','.'),'87afe80878b563e915db28911b8a2cd018e6e0e5')
             if config['news_app']:
                 self.grid.addWidget(self.news.getbox(), 0, 2)
@@ -88,6 +90,7 @@ class InfomirrorGUI(QWidget):
         self.grid.removeItem(self.spacernews)
         for i in reversed(range(self.grid.count())):
             self.grid.itemAt(i).widget().setParent(None)
+        self.grid.addItem(self.spacerweather,0,0)
         self.grid.addWidget(self.a,0,1)
         self.currentuser = 'None'
 
@@ -347,8 +350,8 @@ class App(QWidget):
     def __init__(self,names,encodings):
         super().__init__()
         self.setWindowTitle("Qt live label demo")
-        self.disply_width = 1280
-        self.display_height = 960
+        self.disply_width = 640
+        self.display_height = 480
         self.faceupdater = 0
         self.facetimer = 0
         self.timeout = 0
