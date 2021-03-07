@@ -68,7 +68,7 @@ def get_user_image(token, user_email):
     if type(token) == str and type(user_email) == str:
         response = requests.get(USER_IMAGE_URL, data={"user_account": user_email}, headers={"Authorization": "Token " + token})
         file_name = "user_images/" + user_email.replace(".", "_") + ".png"
-        print(user_email)
+        #print(user_email)
 
         with open(file_name, "wb") as file:
             file.write(response.content)

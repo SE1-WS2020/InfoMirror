@@ -27,8 +27,11 @@ class InfomirrorGUI(QWidget):
         self.news = InfomirrorNews(input['country'],input['category'])
         self.traffic = InfomirrorTraffic(input['quadkey'])
         self.rona = InfomirrorCorona(input['city'])
+        self.spacerweather = QSpacerItem(300,200,QSizePolicy.Minimum)
+        self.spacernews = QSpacerItem(300,200,QSizePolicy.Minimum)
+        self.spacertraffic = QSpacerItem(300,200,QSizePolicy.Minimum)
 
-        spacer = QSpacerItem(300,200,QSizePolicy.Minimum)
+        self.spacerrona = QSpacerItem(300,200,QSizePolicy.Minimum)
         #self.grid.addItem(spacer,0,1)
         self.grid.addWidget(self.a,0,1)
         self.setLayout(self.grid)
@@ -58,14 +61,31 @@ class InfomirrorGUI(QWidget):
         if self.currentuser in user:
             pass
         else:
-            #config = scripts.get_user_config(user.replace('_','.'),'87afe80878b563e915db28911b8a2cd018e6e0e5')
-            self.grid.addWidget(self.weather.getbox(), 0, 0)
-            self.grid.addWidget(self.news.getbox(), 0, 2)
-            self.grid.addWidget(self.traffic.getbox(),1,2)
-            self.grid.addWidget(self.rona.getbox(), 1, 0)
+            #spacer = QSpacerItem(300,200,QSizePolicy.Minimum)
+            config = scripts.get_user_config(user.replace('_','.'),'87afe80878b563e915db28911b8a2cd018e6e0e5')
+            if config['news_app']:
+                self.grid.addWidget(self.news.getbox(), 0, 2)
+            elif not config['news_app']:
+                self.grid.addItem(self.spacernews,0,2)
+            if config['traffic_status']:
+                self.grid.addWidget(self.traffic.getbox(),1,2)
+            elif not config['traffic_status']:
+                self.grid.addItem(self.spacertraffic,1,2)
+            if config['covid_tracker']:
+                self.grid.addWidget(self.rona.getbox(), 1, 0)
+            elif not config['covid_tracker']:
+                self.grid.addItem(self.spacerrona,1,0)
+            if config['weather_app']:
+                self.grid.addWidget(self.weather.getbox(), 0, 0)
+            elif not config['weather_app']:
+                self.grid.addItem(self.spacerweather,0,0)
             self.currentuser = user
 
     def closeui(self):
+        self.grid.removeItem(self.spacerweather)
+        self.grid.removeItem(self.spacerrona)
+        self.grid.removeItem(self.spacertraffic)
+        self.grid.removeItem(self.spacernews)
         for i in reversed(range(self.grid.count())):
             self.grid.itemAt(i).widget().setParent(None)
         self.grid.addWidget(self.a,0,1)
@@ -377,6 +397,8 @@ class App(QWidget):
         if self.timeout == 3:
             if window.currentuser != 'None':
                 window.closeui()
+                timeout = 0
+
         if self.facetimer % 30 == 0:
             self.faceupdater+=1
             self.facetimer = 0
