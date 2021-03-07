@@ -12,36 +12,21 @@ import copy
 import numpy as np
 import cv2
 import face_recognition as fr
+import scripts
 
-
-diyar_image = fr.load_image_file("data/Diyar.jpeg")
-lucas_image = fr.load_image_file("data/Lucas.jpeg")
-oliver_image = fr.load_image_file("data/Oliver.jpeg")
-
-diyar_face_encoding = fr.face_encodings(diyar_image)[0]
-lucas_face_encoding = fr.face_encodings(lucas_image)[0]
-oliver_face_encoding = fr.face_encodings(oliver_image)[0]
-
-known_face_encondings = [lucas_face_encoding,oliver_face_encoding,diyar_face_encoding]
-known_face_names = ["Lucas","Oliver","Diyar"]
 
 class InfomirrorGUI(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, input,parent=None):
         super(InfomirrorGUI, self).__init__(parent)
-        self.city = 'FRANKFURT%20AM%20MAIN'
-        self.category = 'top-headlines'
-        self.country = 'de'
-        self.cid = "2925533"
-        self.quadkey = '/9/268/173'
-        self.a = App()
+        self.a = App(input['names'],input['encodings'])
         self.currentuser = 'None'
         self.grid = QGridLayout()
         self.setWindowTitle("Infomirror")
         self.showFullScreen()
-        self.weather = InfomirrorWeather(self.cid)
-        self.news = InfomirrorNews(self.country,self.category)
-        self.traffic = InfomirrorTraffic(self.quadkey)
-        self.rona = InfomirrorCorona(self.city)
+        self.weather = InfomirrorWeather(input['cid'])
+        self.news = InfomirrorNews(input['country'],input['category'])
+        self.traffic = InfomirrorTraffic(input['quadkey'])
+        self.rona = InfomirrorCorona(input['city'])
 
         spacer = QSpacerItem(300,200,QSizePolicy.Minimum)
         #self.grid.addItem(spacer,0,1)
@@ -73,6 +58,7 @@ class InfomirrorGUI(QWidget):
         if self.currentuser in user:
             pass
         else:
+            #config = scripts.get_user_config(user.replace('_','.'),'87afe80878b563e915db28911b8a2cd018e6e0e5')
             self.grid.addWidget(self.weather.getbox(), 0, 0)
             self.grid.addWidget(self.news.getbox(), 0, 2)
             self.grid.addWidget(self.traffic.getbox(),1,2)
@@ -230,9 +216,9 @@ class InfomirrorTraffic(InfomirrorGroupbox):
 
     def settraffic(self,quadkey):
         url = ('https://traffic.ls.hereapi.com/traffic/6.2/flow/json' + quadkey +
-                   '?apiKey=upuAQnHO45ru_gRpscpQniwppnbIc5XBY5wuS-1Zh3M'
-                   '&minjamfactor=8.0'
-                   '&maxjamfactor=10.0')
+               '?apiKey=upuAQnHO45ru_gRpscpQniwppnbIc5XBY5wuS-1Zh3M'
+               '&minjamfactor=8.0'
+               '&maxjamfactor=10.0')
         response = requests.get(url)
         data = response.json()
         data = data['RWS'][0]['RW']
@@ -338,13 +324,16 @@ class FaceThread(QThread):
                 self.change_pixmap_signal.emit(cv_img)
 
 class App(QWidget):
-    def __init__(self):
+    def __init__(self,names,encodings):
         super().__init__()
         self.setWindowTitle("Qt live label demo")
         self.disply_width = 1280
         self.display_height = 960
+        self.faceupdater = 0
         self.facetimer = 0
         self.timeout = 0
+        self.known_face_names = names
+        self.known_face_encodings = encodings
         # create the label that holds the image
         self.image_label = QLabel(self)
         self.image_label.resize(self.disply_width, self.display_height)
@@ -368,6 +357,10 @@ class App(QWidget):
         self.thread.start()
         self.facer.start()
 
+    def updatename(self):
+        self.known_face_names, self.known_face_encodings = loaduserimages()
+
+
     @pyqtSlot(np.ndarray)
     def update_image(self, cv_img):
         """Updates the image_label with a new opencv image"""
@@ -378,22 +371,26 @@ class App(QWidget):
     def update_face(self, cv_img):
         rgb_frame = cv_img[:, :, ::-1]
         self.facetimer += 1
+        if self.faceupdater == 10:
+            self.updatename()
+            self.faceupdater = 0
         if self.timeout == 3:
             if window.currentuser != 'None':
                 window.closeui()
         if self.facetimer % 30 == 0:
+            self.faceupdater+=1
             self.facetimer = 0
             self.timeout+=1
             face_locations = fr.face_locations(rgb_frame)
             face_encodings = fr.face_encodings(rgb_frame, face_locations)
             for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
-                matches = fr.compare_faces(known_face_encondings, face_encoding)
+                matches = fr.compare_faces(self.known_face_encodings, face_encoding)
                 name = "Unknown"
-                face_distances = fr.face_distance(known_face_encondings, face_encoding)
+                face_distances = fr.face_distance(self.known_face_encodings, face_encoding)
                 best_match_index = np.argmin(face_distances)
                 if matches[best_match_index]:
-                    name = known_face_names[best_match_index]
-                    if name in known_face_names:
+                    name = self.known_face_names[best_match_index]
+                    if name in self.known_face_names:
                         window.startui(name)
                         self.timeout = 0
 
@@ -408,10 +405,25 @@ class App(QWidget):
         p = convert_to_Qt_format.scaled(self.disply_width, self.display_height, Qt.KeepAspectRatio)
         return QPixmap.fromImage(p)
 
+def loaduserimages():
+    known_face_names = []
+    known_face_encodings = []
+    for filename in os.listdir('user_images/'):
+        os.remove('user_images/' + filename)
+    scripts.get_all_user_images('87afe80878b563e915db28911b8a2cd018e6e0e5')
+    for filename in os.listdir('user_images/'):
+        known_face_encodings.append(fr.face_encodings(fr.load_image_file('user_images/' + filename))[0])
+        known_face_names.append(filename.removesuffix('.png'))
+    return known_face_names, known_face_encodings
+
+
+
 
 if __name__ == '__main__':
+    known_face_names, known_face_encodings = loaduserimages()
+    input = {'city': 'FRANKFURT%20AM%20MAIN', 'category': 'top-headlines', 'country' : 'de', 'cid' : "2925533",'quadkey':'/9/268/173','names': known_face_names,'encodings': known_face_encodings}
     app = QApplication(sys.argv)
-    window = InfomirrorGUI()
+    window = InfomirrorGUI(input)
     window.show()
     app.exit(app.exec_())
 

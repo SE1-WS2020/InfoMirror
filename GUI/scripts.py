@@ -77,8 +77,8 @@ def get_user_image(token, user_email):
         print("token and user email must be strings")
 
 
-# get_user_config("anotherone@email.com", get_token("anotherone@email.com", "example_pw"))
+#get_user_config("another1@email.com", '87afe80878b563e915db28911b8a2cd018e6e0e5')
 # get_all_user_emails(get_token("mirror@admin.com", "123456"))
 # get_user_image(get_token("mirror@admin.com", "123456"), "another1@email.com")
-get_all_user_images(get_token("mirror@admin.com", "123456"))
-
+# get_all_user_images(get_token("mirror@admin.com", "123456"))
+#print(get_token('admin@admin.admin','admin'))
