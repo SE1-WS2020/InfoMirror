@@ -27,11 +27,10 @@ class InfomirrorGUI(QWidget):
         self.news = InfomirrorNews(input['country'],input['category'])
         self.traffic = InfomirrorTraffic(input['quadkey'])
         self.rona = InfomirrorCorona(input['city'])
-        self.spacerweather = QSpacerItem(300,200,QSizePolicy.Minimum)
-        self.spacernews = QSpacerItem(300,200,QSizePolicy.Minimum)
-        self.spacertraffic = QSpacerItem(300,200,QSizePolicy.Minimum)
-
-        self.spacerrona = QSpacerItem(300,200,QSizePolicy.Minimum)
+        self.spacerweather = QSpacerItem(600,200,QSizePolicy.Minimum)
+        self.spacernews = QSpacerItem(600,200,QSizePolicy.Minimum)
+        self.spacertraffic = QSpacerItem(600,200,QSizePolicy.Minimum)
+        self.spacerrona = QSpacerItem(600,200,QSizePolicy.Minimum)
         #self.grid.addItem(spacer,0,1)
         self.grid.addItem(self.spacerweather,0,0)
         self.grid.addWidget(self.a,0,1)
@@ -62,8 +61,7 @@ class InfomirrorGUI(QWidget):
         if self.currentuser in user:
             pass
         else:
-            #spacer = QSpacerItem(300,200,QSizePolicy.Minimum)
-            self.grid.removeItem(self.spacerweather)
+            self.closeui()
             config = scripts.get_user_config(user.replace('_','.'),'87afe80878b563e915db28911b8a2cd018e6e0e5')
             if config['news_app']:
                 self.grid.addWidget(self.news.getbox(), 0, 2)
