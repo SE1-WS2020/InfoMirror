@@ -25,7 +25,7 @@ SECRET_KEY = 'e5=4di3ees_-vlhugjedp$*vjg@2w-*mb%%id(zr)m56-vo)7d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*',]
 
 
 # Application definition
@@ -52,7 +52,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ]
 }
-
+AUTHENTICATION_BACKENDS = (
+    ('django.contrib.auth.backends.ModelBackend'),
+)
 AUTH_USER_MODEL = 'account.Account'
 
 MIDDLEWARE = [
