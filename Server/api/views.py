@@ -128,12 +128,11 @@ def check_token_validity(request, user_email):
         return Response({'response': 'Authentication token does not match user email address.'})
 
 
-
 @api_view(['POST', ])
 @permission_classes((IsAuthenticated,))
 def put_image(request):
     user_email = request.data["user_account"]
-
+    print(request.data)
     try:
         existing_image = UserImageModel.objects.get(user_account=user_email)
 

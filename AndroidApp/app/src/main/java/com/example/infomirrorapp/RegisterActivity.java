@@ -71,6 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, apiUrl, this.newUserData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                System.out.println(response);
                 debugView.setText(response.toString());
                 processRegisterResponse(response);
             }

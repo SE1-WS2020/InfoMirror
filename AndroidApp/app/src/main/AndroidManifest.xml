@@ -4,6 +4,7 @@
     package="com.example.infomirrorapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -14,7 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.InfoMirrorApp"
         tools:targetApi="m">
-        <activity android:name=".UserConfigActivity"></activity>
+        <activity android:name=".ChooseImageActivity"></activity>
+        <activity android:name=".UserConfigActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

@@ -30,8 +30,12 @@ public class UserConfigActivity extends AppCompatActivity {
     private TextView debugView;
 
     private String token;
+    private String userEmail;
+
     private JSONObject configJson;
 
+
+    // TODO set initial values for checkboxes
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +49,7 @@ public class UserConfigActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         this.token = intent.getStringExtra(MainActivity.EXTRA_TOKEN);
+        this.userEmail = intent.getStringExtra(MainActivity.EXTRA_USER_EMAIL);
     }
 
     public void saveConfig(View view) {
@@ -85,7 +90,12 @@ public class UserConfigActivity extends AppCompatActivity {
             }};
 
         queue.add(request);
+    }
 
-
+    public void pushChooseImageActivity(View view) {
+        Intent intent = new Intent(this, ChooseImageActivity.class);
+        intent.putExtra(MainActivity.EXTRA_USER_EMAIL,  this.userEmail);
+        intent.putExtra(MainActivity.EXTRA_TOKEN,  this.token);
+        startActivity(intent);
     }
 }
