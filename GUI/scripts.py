@@ -30,7 +30,7 @@ def get_user_config(username, token):
     if type(username) == str and type(token) == str:
         response = requests.get(USER_CONFIG_URL + username, headers={"Authorization": "Token " + token})
         if response.ok:
-            print(response.text)
+            #print(response.text)
             # TODO
             return response.json()
             # return response.text
