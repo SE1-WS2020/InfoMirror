@@ -30,7 +30,7 @@ def get_user_config(username, token):
     if type(username) == str and type(token) == str:
         response = requests.get(USER_CONFIG_URL + username, headers={"Authorization": "Token " + token})
         if response.ok:
-            print(response.text)
+            #print(response.text)
             # TODO
             return response.json()
             # return response.text
@@ -68,7 +68,7 @@ def get_user_image(token, user_email):
     if type(token) == str and type(user_email) == str:
         response = requests.get(USER_IMAGE_URL, data={"user_account": user_email}, headers={"Authorization": "Token " + token})
         file_name = "user_images/" + user_email.replace(".", "_") + ".png"
-        print(user_email)
+        #print(user_email)
 
         with open(file_name, "wb") as file:
             file.write(response.content)
@@ -77,8 +77,8 @@ def get_user_image(token, user_email):
         print("token and user email must be strings")
 
 
-# get_user_config("anotherone@email.com", get_token("anotherone@email.com", "example_pw"))
+#get_user_config("another1@email.com", '87afe80878b563e915db28911b8a2cd018e6e0e5')
 # get_all_user_emails(get_token("mirror@admin.com", "123456"))
 # get_user_image(get_token("mirror@admin.com", "123456"), "another1@email.com")
-get_all_user_images(get_token("mirror@admin.com", "123456"))
-
+# get_all_user_images(get_token("mirror@admin.com", "123456"))
+#print(get_token('admin@admin.admin','admin'))
